@@ -52,3 +52,15 @@ If you clear browser data, the app data can be deleted unless you have a backup.
 3. Add loan details and prepayment options.
 4. Add expenses daily.
 5. Use Dashboard and Reports monthly.
+
+
+## Excel import included
+
+This build includes the actual Excel Daily Expenses data from the uploaded workbook.
+
+Imported month totals:
+- May 2026: ₹422,038
+- June 2026: ₹143,443
+
+If you already opened the old app in your browser, the updated app will auto-merge the imported Excel entries once after you upload this version.
+A separate JSON backup is also included: `expenseflow-excel-import-backup.json`.
