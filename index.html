@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+  <meta name="theme-color" content="#17324d"/>
+  <title>ExpenseFlow Family Finance</title>
+  <link rel="manifest" href="manifest.json"/>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+<div id="app">
+  <header class="app-header">
+    <div class="brand">
+      <div class="logo">₹</div>
+      <div>
+        <p>Family Finance Tracker</p>
+        <h1>ExpenseFlow</h1>
+      </div>
+    </div>
+    <div class="month-controls">
+      <button id="prevMonth" class="mini">‹</button>
+      <input id="activeMonth" type="month"/>
+      <button id="nextMonth" class="mini">›</button>
+    </div>
+  </header>
+
+  <nav class="side-nav">
+    <button class="nav-btn active" data-screen="dashboard">Dashboard</button>
+    <button class="nav-btn" data-screen="add">Add Expense</button>
+    <button class="nav-btn" data-screen="expenses">Expenses</button>
+    <button class="nav-btn" data-screen="budget">Budget</button>
+    <button class="nav-btn" data-screen="partner">Partner</button>
+    <button class="nav-btn" data-screen="loan">Loan</button>
+    <button class="nav-btn" data-screen="reports">Reports</button>
+    <button class="nav-btn" data-screen="settings">Settings</button>
+  </nav>
+
+  <main>
+    <section id="dashboard" class="screen active">
+      <div class="hero-card">
+        <div>
+          <p id="monthLabel">Selected month</p>
+          <h2 id="heroSurplus">₹0</h2>
+          <span>Monthly surplus after expenses</span>
+        </div>
+        <button id="printReportTop" class="light-btn">Print Report</button>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="kpi card"><span>Income</span><strong id="dashIncome">₹0</strong></div>
+        <div class="kpi card"><span>Expenses</span><strong id="dashExpense">₹0</strong></div>
+        <div class="kpi card"><span>Savings Rate</span><strong id="dashRate">0%</strong></div>
+        <div class="kpi card"><span>Budget Used</span><strong id="dashBudgetUsed">0%</strong></div>
+      </div>
+
+      <div class="two-panel">
+        <div class="card">
+          <div class="card-title">
+            <h2>Budget vs Actual</h2>
+            <span>This month</span>
+          </div>
+          <div id="budgetBars"></div>
+        </div>
+        <div class="card">
+          <div class="card-title">
+            <h2>Partner Split</h2>
+            <span>Paid by A/P</span>
+          </div>
+          <div id="partnerBars"></div>
+        </div>
+      </div>
+
+      <div class="two-panel">
+        <div class="card">
+          <div class="card-title">
+            <h2>Surplus Allocation</h2>
+            <span>From your workbook logic</span>
+          </div>
+          <div id="surplusBox"></div>
+        </div>
+        <div class="card">
+          <div class="card-title">
+            <h2>Loan Snapshot</h2>
+            <span>EMI + prepayment</span>
+          </div>
+          <div id="loanSnapshot"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <h2>Month Comparison</h2>
+          <span>Previous vs selected month</span>
+        </div>
+        <div id="monthCompare"></div>
+      </div>
+    </section>
+
+    <section id="add" class="screen">
+      <form id="expenseForm" class="card form-card">
+        <div class="card-title">
+          <h2 id="expenseFormTitle">Add Daily Expense</h2>
+          <span>Every entry is automatically linked to its month</span>
+        </div>
+        <input type="hidden" id="editingExpenseId"/>
+        <div class="form-grid">
+          <label>Paid by
+            <select id="paidBy"></select>
+          </label>
+          <label>Amount
+            <input id="amount" type="number" inputmode="decimal" placeholder="Enter amount" required/>
+          </label>
+          <label>Category
+            <select id="category"></select>
+          </label>
+          <label>Payment Mode
+            <select id="payment">
+              <option>UPI</option>
+              <option>Cash</option>
+              <option>Card</option>
+              <option>Bank Transfer</option>
+              <option>Wallet</option>
+            </select>
+          </label>
+          <label>Date
+            <input id="date" type="date" required/>
+          </label>
+          <label>Reimbursement
+            <select id="reimburse">
+              <option>No</option>
+              <option>Yes</option>
+            </select>
+          </label>
+        </div>
+        <label>Description / Notes
+          <input id="description" placeholder="Milk, fuel, school supplies, prepayment..."/>
+        </label>
+        <button class="primary" type="submit" id="saveExpenseBtn">Save Expense</button>
+        <button class="secondary hidden" type="button" id="cancelEditBtn">Cancel Edit</button>
+      </form>
+
+      <div class="card">
+        <div class="card-title">
+          <h2>Quick Add</h2>
+          <span>Use common items from your tracker</span>
+        </div>
+        <div id="quickAddList" class="quick-grid"></div>
+      </div>
+    </section>
+
+    <section id="expenses" class="screen">
+      <div class="card">
+        <div class="card-title row-title">
+          <div>
+            <h2>Expenses</h2>
+            <span>Filter, edit, delete</span>
+          </div>
+          <button id="clearMonthBtn" class="danger">Clear Month</button>
+        </div>
+        <div class="filter-row">
+          <select id="expenseFilterCategory"></select>
+          <select id="expenseFilterPerson"></select>
+          <input id="expenseSearch" placeholder="Search notes/category..."/>
+        </div>
+        <div id="expenseList"></div>
+      </div>
+    </section>
+
+    <section id="budget" class="screen">
+      <div class="card">
+        <div class="card-title row-title">
+          <div>
+            <h2>Budget Items</h2>
+            <span>Add, rename, delete, edit monthly budget</span>
+          </div>
+          <button id="addBudgetItemBtn" class="secondary">Add Item</button>
+        </div>
+        <div id="budgetEditor"></div>
+      </div>
+    </section>
+
+    <section id="partner" class="screen">
+      <div class="card form-card">
+        <div class="card-title">
+          <h2>Partner Setup</h2>
+          <span>Person A + Person P from your Excel</span>
+        </div>
+        <div class="form-grid">
+          <label>Person A Name
+            <input id="personAName"/>
+          </label>
+          <label>Person P Name
+            <input id="personPName"/>
+          </label>
+          <label>A Monthly Income
+            <input id="incomeA" type="number"/>
+          </label>
+          <label>P Monthly Income
+            <input id="incomeP" type="number"/>
+          </label>
+        </div>
+        <button id="savePartnerBtn" class="primary">Save Partner Details</button>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <h2>Partner Monthly Summary</h2>
+          <span>For selected month</span>
+        </div>
+        <div id="partnerSummary"></div>
+      </div>
+    </section>
+
+    <section id="loan" class="screen">
+      <div class="card form-card">
+        <div class="card-title">
+          <h2>Loan Tracker</h2>
+          <span>EMI, outstanding, interest, prepayments</span>
+        </div>
+        <div class="form-grid">
+          <label>Original Loan Amount
+            <input id="loanOriginal" type="number"/>
+          </label>
+          <label>Outstanding Balance
+            <input id="loanBalance" type="number"/>
+          </label>
+          <label>Monthly EMI
+            <input id="loanEmi" type="number"/>
+          </label>
+          <label>Annual Interest %
+            <input id="loanRate" type="number" step="0.01"/>
+          </label>
+        </div>
+        <button id="saveLoanBtn" class="primary">Save Loan</button>
+      </div>
+
+      <div class="card">
+        <div class="card-title row-title">
+          <div>
+            <h2>Prepayment Options</h2>
+            <span>Edit and add as expense</span>
+          </div>
+          <button id="addPrepayBtn" class="secondary">Add Option</button>
+        </div>
+        <div id="prepayList"></div>
+      </div>
+    </section>
+
+    <section id="reports" class="screen">
+      <div id="printArea" class="card report-card">
+        <div class="report-header">
+          <h2 id="reportTitle">Monthly Report</h2>
+          <p>ExpenseFlow Family Finance</p>
+        </div>
+        <div id="reportContent"></div>
+      </div>
+      <div class="card no-print">
+        <div class="button-row">
+          <button id="printReportBtn" class="primary">Print / Save PDF</button>
+          <button id="exportCsvBtn" class="secondary">Export CSV</button>
+          <button id="backupJsonBtn" class="secondary">Backup JSON</button>
+        </div>
+        <label class="upload-box">Restore JSON Backup
+          <input id="restoreJsonInput" type="file" accept="application/json"/>
+        </label>
+      </div>
+    </section>
+
+    <section id="settings" class="screen">
+      <div class="card">
+        <div class="card-title">
+          <h2>App Settings</h2>
+          <span>Stored locally in this browser</span>
+        </div>
+        <div class="notice">
+          To install on Android: host this folder on GitHub Pages, open the URL in Chrome, tap ⋮, then Add to Home screen.
+        </div>
+        <div class="button-row">
+          <button id="seedDemoBtn" class="secondary">Add Demo Data</button>
+          <button id="resetAllBtn" class="danger">Reset App</button>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
